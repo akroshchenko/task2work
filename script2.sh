@@ -9,43 +9,54 @@ print_body() {
 
 local name=$(cut -d " " -f 1 <(echo $2))
 local version=$(cut -d " " -f 2 <(echo $2))
-echo "start printbody"
+#local name=$2
+#local version=$3
+
+
+
 flag=0
 while read -r line
 do
-if [ ${flag} ]
-then
-	if [[ $line =~ ^.*--  ]]
-	then 
-		echo "$line"
-		break
+	if [ ${flag} -eq 1 ]
+		then
+			if [[ $line =~ ^.*--  ]]
+				then 
+					echo "$line"
+					echo ""
+					continue
+			fi
+			echo "$line"
 	fi
-echo "$line"
-fi
 
-if [[ $line =~ .*${name}.*${version} ]]
-then
-echo "$line"
-flag=1 
-fi
+	if [[ ${line} =~ .*${name}.*${version} ]] 
+		then
+			echo "$line"
+			flag=1 
+	fi
 done<${input_file}
-echo "end of print body"
+
+
 return 0
 }
 
 sort_by_version(){
-old_IFS=${IFS}
-echo "start of sort and"
+#old_IFS=${IFS}
 
-
-
+#echo "$( grep "^${name_of_package}" ${input_file} |  cut -d " " -f 1,2 |sort -r -k 2,2)" > temp
 #IFS=$'\n'
-for print_package in "$( grep "^${name_of_package}" ${input_file} | cut -d " " -f 2 |sort -r -k 2,2 | tr '\n' ' ')"
-do
-	IFS=$old_IFS
-	print_body input_file "${print_package}"
+#for print_package in "$( grep "^${name_of_package}" ${input_file} |  cut -d " " -f 1,2 |sort -r -k 2,2 )"
+#do
+#	echo "print = ${print_package}"
+#	IFS=$old_IFS
+echo $(grep "^${name_of_package}" ${input_file} | cut -d " " -f 1,2 | sort -r -k 2,2) >sort_temp
+while read line
+	do
+		print_body $input_file "${line}"
+	done <sort_temp    #(grep "^${name_of_package}" ${input_file} | cut -d " " -f 1,2 | sort -r -k 2,2)
 
-done
+#	print_body $input_file "${print_package}"
+
+#done
 echo "end of sort"
 
 }
@@ -76,5 +87,6 @@ case $1 in
 	   *) echo "Error in the comand"
 	      echo "use next syntax $usage"
 esac
+
 
 
