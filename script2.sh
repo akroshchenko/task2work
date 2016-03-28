@@ -78,7 +78,7 @@ do
 	if echo "${line_row}" | grep "<.*@.*>" | grep "\-\-">/dev/null
 		then
 
-			my_line=${name_version}				
+			my_line="${name_version}"				
 			line="$(echo "${line_row}"| tr -s [:blank:] | grep -Eow "(Sun,|Mon,|Tue,|Wed,|Thu,|Fri,|Sat).*" | cut -d " " -f 2- )"
 
 			year="$(echo "${line}" | cut -d " " -f 3)"
@@ -332,7 +332,7 @@ while raed -r line
 	do
 		name_package_1="$( echo "${line}" |cut -d " " -f 1 )"
 		version_1="$( echo "${line}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
-		date_1="$(echo "${line} |cut -d " " -f 3- |sed -e s/jan/1/g -e s/Feb/2/g -e s/Mar/3/g -e s/Apr/4/g -e s/May/5/g -e s/jun/6/g -e s/jul/7/g -e s/Aug/8/g -e s/jSep/9/g -e s/Oct/10/g -e s/Nov/11/g -e s/Dec/12/g -e "s/ //g")"
+		date_1="$(echo "${line}" |cut -d " " -f 3- |sed -e s/jan/1/g -e s/Feb/2/g -e s/Mar/3/g -e s/Apr/4/g -e s/May/5/g -e s/jun/6/g -e s/jul/7/g -e s/Aug/8/g -e s/jSep/9/g -e s/Oct/10/g -e s/Nov/11/g -e s/Dec/12/g -e "s/ //g")"
 
 		while read -r line_1
 			do
