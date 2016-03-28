@@ -104,13 +104,13 @@ do
 					day=$(( day +1))
 					hour=$((hour - 24))
 				else
-					if [ "${real_hour}" lt 0 ]
+					if [ "${real_hour}" -lt 0 ]
 						then
 							day=$(( day - 1))
 							real_hour=$((real_hour + 24))
 					fi
 			fi
-#################################################################################
+
 			if [ $((year % 4)) -eq 0 -a $((year%100)) -ne 0 ]
 				then 
 					visoc_year=1
@@ -170,6 +170,7 @@ do
 						then 
 							day=31
 							nonth=Jan
+					fi
 					;;
 				Mar) 
 					if [ "${day}" -gt 31 ]
@@ -242,7 +243,7 @@ do
                                         fi
                                         ;;
                                 Aug)
-					 if [ "${day}" -gt 31]
+					if [ "${day}" -gt 31]
                                                 then
                                                         day=$((day - 31))
                                                         month=Sep
@@ -268,7 +269,7 @@ do
                                         fi
                                         ;;
                                 Oct)
-					if [ "${day}" -gt 31]
+					if [ "${day}" -gt 31 ]
                                                 then
                                                         day=$((day - 31))
                                                         month=Nov
@@ -281,7 +282,7 @@ do
                                         fi
                                         ;;
                                 Nov)
-					 if [ "${day}" -gt 30 ]
+					if [ "${day}" -gt 30 ]
                                                 then
                                                         day=$((day - 30))
                                                         month=Dec
@@ -294,7 +295,7 @@ do
                                         fi
                                         ;;
 				Dec)
-					if [ "${day}" -gt 31]
+					if [ "${day}" -gt 31 ]
                                                 then
                                                         day=$((day - 31))
                                                         month=Jan
