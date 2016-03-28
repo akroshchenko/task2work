@@ -52,7 +52,7 @@ while read line
 
 
 sort_by_date(){
-echo "func sort_by_date"
+#echo "func sort_by_date"
 local M
 local real_hour
 local real_minutr
@@ -66,6 +66,7 @@ local year
 local day
 local my_line
 local name_version
+local visoc_year=0
 
 :>date_sort_temp
 while read -r line_row
@@ -95,12 +96,220 @@ do
 			if [ ${real_minute=$(( minute - extra_minute ))} -ge 60 ]
 				then 
 					hour=$(( hour +1 ))
+					minute=$((minute - 60))
 			fi
 
 			if [ ${real_hour=$((hour - extra_hour))} -gt 24 ]
 				then
 					day=$(( day +1))
-			fi				
+					hour=$((hour - 24))
+				else
+					if [ "${real_hour}" lt 0 ]
+						then
+							day=$(( day - 1))
+							hour=$((hour + 24))
+			fi
+#################################################################################
+			if [ $((year % 4)) -eq 0 -a $((year%100)) -ne 0 ]
+				then 
+					visoc_year=1
+					if [ "${month}" = "Feb" ]
+						then 
+							if [ $(day) -qt 29]
+								then 
+									month=Mar
+									day=$((day-29))
+							fi
+ 					fi
+
+				elif [ $((year%400)) -eq 0 ]
+					then 
+						visoc_year=1
+						if [ "${month}" = "Feb" ]
+	                                                then 
+								if [ $(day) -qt 29] 
+        	                                                	then 
+                	                                                	month=Mar
+                        	                                        	day=$((day-29))
+								fi
+
+                                        	fi
+				else 
+					visoc_year=0
+					if  [ "${month}" = "Feb" ]
+                                                         then 
+                                                                 if [ $(day) -qt 28 ]
+                                                                         then 
+                                                                                 month=Mar
+                                                                                 day=$((day-28))
+								 fi
+					fi
+
+			fi
+
+
+
+			case "${month}" in 
+				Jan)
+					if [ "${day}" -gt 31]
+						then			
+							day=$((day - 31))
+							month=Feb
+					fi
+
+					if [ "${day}" -le 0 ]
+						then
+							day=31
+							mont=Dec
+							year=$((year - 1))
+					fi
+					;;
+				Feb)
+					if [ "${day}" -le 0 ]
+						then 
+							day=31
+							nonth=Jan
+					;;
+				Mar) 
+					if [ "${day}" -gt 31 ]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Apr
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+							if [ "${visoc_year}" -eq 1 ]
+								then
+									day=29
+								else
+									day=28
+							fi
+                                                        mont=Feb
+                                        fi
+					;;
+				Apr)
+					if [ "${day}" -gt 30 ]
+                                                then
+                                                        day=$((day - 30))
+                                                        month=May
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=31
+                                                        mont=Mar
+                                        fi
+					;;
+                                May)
+					if [ "${day}" -gt 31]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Jun
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=30
+                                                        mont=Apr
+                                        fi
+                                        ;;
+                                Jun)
+					if [ "${day}" -gt 30 ]
+                                                then
+                                                        day=$((day - 30))
+                                                        month=Jul
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=31
+                                                        mont=May
+                                        fi
+                                        ;;
+                                Jul)
+					if [ "${day}" -gt 31]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Aug
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=30
+                                                        mont=Jun
+                                        fi
+                                        ;;
+                                Aug)
+					 if [ "${day}" -gt 31]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Sep
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=31
+                                                        mont=Jul
+                                        fi
+                                        ;;
+				Sep)
+					if [ "${day}" -gt 30 ]
+                                                then
+                                                        day=$((day - 30))
+                                                        month=Oct
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=31
+                                                        mont=Aug
+                                        fi
+                                        ;;
+                                Oct)
+					if [ "${day}" -gt 31]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Nov
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=30
+                                                        mont=Sep
+                                        fi
+                                        ;;
+                                Nov)
+					 if [ "${day}" -gt 30 ]
+                                                then
+                                                        day=$((day - 30))
+                                                        month=Dec
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=31
+                                                        mont=Oct
+                                        fi
+                                        ;;
+				Dec)
+					if [ "${day}" -gt 31]
+                                                then
+                                                        day=$((day - 31))
+                                                        month=Jan
+							year=$(( year + 1))
+                                        fi
+
+                                        if [ "${day}" -le 0 ]
+                                                then
+                                                        day=30
+                                                        mont=Nov
+                                        fi
+			esac
+
+	
+################################################
+
 			my_line="${my_line} ${year} ${month} ${day} ${hour} ${minute} ${sec}"
 			echo "${my_line}">>date_sort_temp
 
