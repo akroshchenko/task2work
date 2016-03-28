@@ -375,7 +375,7 @@ while read -r line
 
 
 process_epoch(){
-if grep "^${global_name_of_package}" "${input_file}" |grep ":"
+if grep "^${global_name_of_package}" "${input_file}" |grep ":" >/dev/null
 	then 
 		echo "epoch present"
 fi
@@ -386,8 +386,15 @@ if [ "${answer}" = "yes" ]
 		cp "${input_file}" "${input_file}.epoch"
 		sed -i '/mysql.*([0-9][^:]/s/(/(0:/g' "${input_file}"
 	else 
-		echo "change file for working with epoch"
+		echo "you mast change file for working with epoch"
 fi
+}
+
+looking_for_errors(){
+echo "Please, change this formating errors:"
+grep -E "^[[:space:]]+mysql.* \(.*\)" "${input_file}" 
+grep -E "^[[:space:]]*--.*>[[:space:]]*(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" "${input_file}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)"
+
 }
 
 process_epoch
@@ -416,6 +423,7 @@ case $1 in
 				looking_for_anomalies
 			   ;;
 		       error)
+				looking_for_errors
 			   ;;
 			   *)echo "no such parametrs in find"
 		esac
