@@ -391,7 +391,8 @@ fi
 }
 
 looking_for_errors(){
-echo "Please, change this formating errors:"
+echo -E "Please, change this formating errors:"
+grep -E "^mysql.*\(.*\).*" "${input_file}" | grep -Ev "^mysql.*[[:space:]]{1}\(([0-9]:)?[0-9\.[0-9]\..*"
 grep -E "^[[:space:]]+mysql.* \(.*\)" "${input_file}" 
 grep -E "^[[:space:]]*--.*>[[:space:]]*(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" "${input_file}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)"
 
