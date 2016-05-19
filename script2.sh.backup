@@ -4,13 +4,13 @@ set -e
 
 USAGE="script2.sh sort (version|date|vd) | find (anom|error) CHANGELOG_FILE"
 
-INPUT_FILE="${3}"
+input_file="${3}"
 
-if ["$(head -n 1 ${INPUT_FILE})" == " "];then
-	echo "File ${INPUT_FILE} contains empty first line"
+if ["$(head -n 1 ${input_file})" == " "];then
+	echo "File ${input_file} contains empty first line"
 	exit 1
 fi
-GLOBAL_NAME_OF_PACKAGE="$(head -n 1 ${INPUT_FILE} |cut -d" " -f1|cut -d"-" -f1)"
+GLOBAL_NAME_OF_PACKAGE="$(head -n 1 ${input_file} |cut -d" " -f1|cut -d"-" -f1)"
 
 print_body(){
 
@@ -45,13 +45,13 @@ while read -r line_1
 						echo "$line"
 						flag=1 
 				fi
-			done<${INPUT_FILE}
+			done<${input_file}
 	done<$1
 }
 
 sort_by_version(){
 
-echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | sort -k 2,2Vr)" >ver_sort_temp
+echo "$(grep "^${global_name_of_package}" "${input_file}" | cut -d " " -f 1,2 | sort -k 2,2Vr)" >ver_sort_temp
 
 }
 
@@ -76,9 +76,9 @@ local visoc_year=0
 while read -r line_row
 do
 
-	if echo "${line_row}" | grep "^${GLOBAL_NAME_OF_PACKAGE}">/dev/null
+	if echo "${line_row}" | grep "^${global_name_of_package}">/dev/null
 		then 
-			name_version="$(echo -n "$(echo "${line_row}" | grep "^${GLOBAL_NAME_OF_PACKAGE}" |cut -d " " -f 1,2)")"
+			name_version="$(echo -n "$(echo "${line_row}" | grep "^${global_name_of_package}" |cut -d " " -f 1,2)")"
 	fi
 
 
@@ -317,7 +317,7 @@ do
 	fi	
 
 
-done<"${INPUT_FILE}"
+done<"${input_file}"
 
 
 sort -t " " -k3,3r -k4,4Mr -k5,5r -k6,6r -k7,7r -k8,8r date_temp > date_sort_temp
@@ -382,7 +382,7 @@ while read -r line
 
 
 process_epoch(){
-if grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" |grep ":" >/dev/null
+if grep "^${global_name_of_package}" "${input_file}" |grep ":" >/dev/null
 	then 
 		echo "epoch present"
 fi
@@ -390,8 +390,8 @@ echo "change file for working with epoch (yes|no)"
 read answer
 if [ "${answer}" = "yes" ]
 	then 
-		cp "${INPUT_FILE}" "${INPUT_FILE}.epoch"
-		sed -i '/mysql.*([0-9][^:]/s/(/(0:/g' "${INPUT_FILE}"
+		cp "${input_file}" "${input_file}.epoch"
+		sed -i '/mysql.*([0-9][^:]/s/(/(0:/g' "${input_file}"
 	else 
 		echo "you mast change file for working with epoch"
 fi
@@ -399,9 +399,9 @@ fi
 
 looking_for_errors(){
 echo -E "Please, change this formating errors:"
-grep -E "^mysql.*\(.*\).*" "${INPUT_FILE}" | grep -Ev "^mysql.*[[:space:]]{1}\(([0-9]:)?[0-9\.[0-9]\..*"
-grep -E "^[[:space:]]+mysql.* \(.*\)" "${INPUT_FILE}" 
-grep -E "^[[:space:]]*--.*>[[:space:]]*(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" "${INPUT_FILE}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)"
+grep -E "^mysql.*\(.*\).*" "${input_file}" | grep -Ev "^mysql.*[[:space:]]{1}\(([0-9]:)?[0-9\.[0-9]\..*"
+grep -E "^[[:space:]]+mysql.* \(.*\)" "${input_file}" 
+grep -E "^[[:space:]]*--.*>[[:space:]]*(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" "${input_file}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)"
 
 }
 
@@ -438,9 +438,9 @@ case $1 in
 				    ;;
 				   *)
 					echo "no such parametrs in find"
-					echo ${USAGE}
+					echo ${usage}
 			esac
 		;;
 		*) echo "Error in the comand"
-		   echo "use next syntax $USAGE"
+		   echo "use next syntax $usage"
 esac
