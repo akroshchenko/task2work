@@ -1,0 +1,34 @@
+bandit (0.13.2-2~u14.04+mos1) mos8.0; urgency=medium
+
+  * Source: http://http.debian.net/debian/pool/main/b/bandit/bandit_0.13.2-2.dsc
+
+ -- Ivan Udovichenko <iudovichenko@mirantis.com>  Tue, 29 Sep 2015 15:59:41 +0300
+
+bandit (0.13.2-2) experimental; urgency=medium
+
+  * Adds Breask+Replaces to allow upgrades (Closes: #798457).
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 14 Sep 2015 11:02:58 +0000
+
+bandit (0.13.2-1) experimental; urgency=low
+
+  [ Dave Walker (Daviey) ]
+  * New upstream release:
+    - Use (& install) /etc/bandit/bandit.yaml config (Closes: #794072)
+    - Improved description of subprocess finding report (Closes: #794084)
+    - Fix Bad spacing in --help result (Closes: #794076)
+
+  [ Thomas Goirand ]
+  * Adds Ubuntu patch (Closes: #796394):
+    - Update dependencies to align with upstream.
+    - Run tests with output and fail the build if test failure.
+  * Added Python 3 support (Closes: #794074).
+  * Using debian/unstable as packaging branch.
+
+ -- Thomas Goirand <zigo@debian.org>  Sun, 30 Aug 2015 15:31:18 +0000
+
+bandit (0.12.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #793007).
+
+ -- Dave Walker (Daviey) <email@daviey.com>  Wed, 22 Jul 2015 09:01:39 +0100
