@@ -1,11 +1,11 @@
 #!/bin/bash
 
-set -o errexit
-set -x # delete after debug
+# set -o errexit
+# set -x # delete after debug
 
-USAGE="script2.sh sort (version|date|vd) | find (anom|error) CHANGELOG_FILE"
+USAGE="script.sh CHANGELOG_FILE"
 
-INPUT_FILE="${3}"
+INPUT_FILE="${1}"
 
 if [ -z "$(head -n 1 ${INPUT_FILE})" ];then
 	echo "File ${INPUT_FILE} contains empty first LINE"
@@ -19,31 +19,29 @@ GLOBAL_NAME_OF_PACKAGE="$(head -n 1 ${INPUT_FILE} |cut -d" " -f1|cut -d"-" -f1)"
 print_body(){
 
 local INPUT_ORDER=$1
-local NAME
-local VERSION
+local NAME VERSION LINE_1 FLAG
 
 while read -r LINE_1; do
-		NAME="$(echo "${LINE_1}"|cut -d " " -f 1)"
-		VERSION="$(echo "${LINE_1}"|cut -d " " -f 2)"
+	if $(echo "${LINE_1}" |grep -q "^${GLOBAL_NAME_OF_PACKAGE}"); then
+		NAME="$( echo "${LINE_1}" |cut -d " " -f 1 )"
+		VERSION="$( echo "${LINE_1}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
 		FLAG=0
-		while read -r LINE; do
-			if [ ${FLAG} -eq 1 ]; then
-				if echo "${LINE_1}" | grep "<.*@.*>" | grep -q "--" --
-					echo "$LINE_1"
-					echo ""
-					break
-				fi
-				echo "$LINE_1"
+	fi
+	while read -r LINE; do
+		if [ ${FLAG} -eq 1 ]; then
+			if echo "${LINE}" | grep "<.*@.*>" | grep -e "^ -- " --; then
+				echo -e "${LINE}"
+				echo ""
+				break
 			fi
-		
-			if echo "${LINE_1}" | grep -q "${NAME}" && echo "${LINE_1}" | grep -q "${VERSION}"; then
-				echo "$LINE_1"
-				FLAG=1
-			else 
-					echo "probram with NAME VERSION matching" # delete after debug
-			fi
-		done<${INPUT_FILE}
-	done<${INPUT_ORDER}
+			echo -e "${LINE}"
+		fi
+		if echo "${LINE}" | grep -q "${NAME}" && echo "${LINE}" | grep -q "${VERSION}"; then
+			echo -e "${LINE}"
+			FLAG=1
+		fi
+	done<${INPUT_FILE}
+done<${INPUT_ORDER}
 
 }
 
@@ -51,47 +49,51 @@ while read -r LINE_1; do
 sort_by_version(){
 
 VER_SORT_TEMP=$(mktemp -t VER_SORT_TEMP.XXXXX)
-echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | sort -k 2,2Vr)" >${VER_SORT_TEMP}
+echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | sort -k 2,2r)" >${VER_SORT_TEMP}
 echo "List of the PACKAGEs sorting by version store in ${VER_SORT_TEMP}"
 
 }
 
 
 analyze_date(){
-
-INPUT_LINE=$1
+local INPUT_LINE=$1
 local YEAR MONTH DAY YEAR HOUR EXTRA_HOUR MINUTE EXTRA_MINUTE SEC REAL_MINUTE REAL_HOUR
 
-PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tue,|Wed,|Thu,|Fri,|Sat).*" | cut -d " " -f 2- )"
+# PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tue,|Wed,|Thu,|Fri,|Sat).*" | cut -d " " -f 6- )"
+PREPARED_LINE="$(echo "${INPUT_LINE}" | awk '{for(i=4;i>=0;i--) printf("%s%s",$(NF-i),OFS)}')"
 		YEAR="$(echo "${PREPARED_LINE}" | cut -d " " -f 3)"
 		MONTH="$(echo "${PREPARED_LINE}" | cut -d " " -f 2)"
 		DAY="$(echo "${PREPARED_LINE}" | cut -d " " -f 1)"
-		HOUR="$(echo "${PREPARED_LINE}" | cut -d " " -f 4 | cut -d ":" -f 1)"	
-		EXTRA_HOUR="$(echo "${PREPARED_LINE}" | cut -d " " -f 5 | cut -c 1,2,3)"
+		# DAY=${DAY#0}
+		HOUR="$(echo "${PREPARED_LINE}" | cut -d " " -f 4 | cut -d ":" -f 1)"
+		# HOUR=${HOUR#0}
+		EXTRA_HOUR="$(echo "${PREPARED_LINE}" | cut -d " " -f 5 | cut -c 1,2,3 |sed 's/+//')"
+		# EXTRA_HOUR=${EXTRA_HOUR#0}
 		MINUTE="$(echo "${PREPARED_LINE}" | cut -d " " -f 4 | cut -d ":" -f 2)"
-		EXTRA_MINUTE="$(echo "${PREPARED_LINE}" | cut -d " " -f 5 | cut -c 1,4,5)"
+		# MINUTE=${MINUTE#0}
+		EXTRA_MINUTE="$(echo "${PREPARED_LINE}" | cut -d " " -f 5 | cut -c 1,4,5 |sed 's/+//')"
+		# EXTRA_MINUTE=${EXTRA_MINUTE#0}
 		SEC="$(echo "${PREPARED_LINE}" | cut -d " " -f 4 | cut -d ":" -f 3)"
-
-		if [ ${REAL_MINUTE=$(( MINUTE - EXTRA_MINUTE ))} -ge 60 ]; then 
-			HOUR=$(( HOUR +1 ))
-			MINUTE=$((MINUTE - 60))
-		elif [ ${REAL_MINUTE=$(( MINUTE - EXTRA_MINUTE ))} -lt 0 ]; then 
-			HOUR=$(( HOUR - 1 ))
-			MINUTE=$((MINUTE + 60))
+		if [ ${REAL_MINUTE=$(expr ${MINUTE} - ${EXTRA_MINUTE})} -ge 60 ]; then 
+			HOUR=$(expr $HOUR +1 )
+			REAL_MINUTE=$(expr $REAL_MINUTE - 60)
+		elif [ ${REAL_MINUTE} -lt 0 ]; then 
+			HOUR=$(expr $HOUR - 1 )
+			REAL_MINUTEE=$(expr $REAL_MINUTE + 60)
 		fi
 
-		if [ ${REAL_HOUR=$((HOUR - EXTRA_HOUR))} -ge 24 ]; then
-			DAY=$(( DAY +1))
-			HOUR=$((HOUR - 24))
-		elif [ "${REAL_HOUR}" -lt 0 ]; then
-			DAY=$(( DAY - 1))
-			REAL_HOUR=$((REAL_HOUR + 24))
+		if [ ${REAL_HOUR=$(expr $HOUR - $EXTRA_HOUR)} -ge 24 ]; then
+			DAY=$(expr $DAY +1)
+			REAL_HOUR=$(expr $REAL_HOUR - 24)
+		elif [ ${REAL_HOUR#0} -lt 0 ]; then
+			DAY=$(expr $DAY - 1)
+			REAL_HOUR=$(expr $REAL_HOUR + 24)
 		fi
 
 		if [ $((YEAR % 4)) -eq 0 -a $((YEAR%100)) -ne 0 ]; then 
 			VISOC_YEAR=1
 			if [ "${MONTH}" = "Feb" ]; then 
-				if [ $(DAY) -qt 29]; then 
+				if [ $(DAY) -qt 29 ]; then 
 					MONTH=Mar
 					DAY=$((DAY-29))
 				fi
@@ -115,7 +117,7 @@ PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tu
 		fi
 		case "${MONTH}" in 
 			Jan)
-				if [ "${DAY}" -gt 31]; then			
+				if [ "${DAY}" -gt 31 ]; then			
 					DAY=$((DAY - 31))
 					MONTH=Feb
 				fi
@@ -156,7 +158,7 @@ PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tu
 				fi
 				;;
        		May)
-				if [ "${DAY}" -gt 31]; then
+				if [ "${DAY}" -gt 31 ]; then
 					DAY=$((DAY - 31))
                     MONTH=Jun
 				fi
@@ -176,7 +178,7 @@ PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tu
 				fi
 				;;
             Jul)
-				if [ "${DAY}" -gt 31]; then
+				if [ "${DAY}" -gt 31 ]; then
 					DAY=$((DAY - 31))
 					MONTH=Aug
 				fi
@@ -187,7 +189,7 @@ PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tu
 				fi
 				;;
 			Aug)
-				if [ "${DAY}" -gt 31]; then
+				if [ "${DAY}" -gt 31 ]; then
 					DAY=$((DAY - 31))
 					MONTH=Sep
 				fi
@@ -238,14 +240,14 @@ PREPARED_LINE="$(echo "${INPUT_LINE}"| tr -s [:blank:] | grep -Ew "(Sun,|Mon,|Tu
 					MONTH=Nov
 				fi
 			esac
+N_MONTH="$(echo ${MONTH} |sed -e s/Jan/1/g -e s/Feb/2/g \
+	-e s/Mar/3/g -e s/Apr/4/g -e s/May/5/g -e s/Jun/6/g \
+	-e s/Jul/7/g -e s/Aug/8/g -e s/Sep/9/g -e s/Oct/10/g \
+	-e s/Nov/11/g -e s/Dec/12/g)"
 
-	fi	
-return "$(echo "${YEAR} ${MONTH} ${DAY} ${REAL_HOUR} ${REAL_MINUTE} ${SEC}" |sed -e s/Jan/1/g -e s/Feb/2/g \
-	-e s/Mar/3/g -e s/Apr/4/g -e s/May/5/g -e s/jun/6/g \
-	-e s/jul/7/g -e s/Aug/8/g -e s/jSep/9/g -e s/Oct/10/g \
-	-e s/Nov/11/g -e s/Dec/12/g -e "s/ //g")"
+echo "${YEAR}$(expr ${N_MONTH} \* 50000 + ${DAY} \* 24 \* 60 + ${REAL_HOUR} \* 60 + ${REAL_MINUTE})"
+
 }
-
 
 looking_for_anomalies(){
 
@@ -253,42 +255,59 @@ local DATE_1 DATE_2 NAME_PACKAGE_1 NAME_PACKAGE_2 VERSION_1 VERSION_2 LINE LINE_
 
 
 while read -r LINE; do
-	if $(echo "${LINE}" |grep -q "^${GLOBAL_NAME_OF_PACKAGE}"); then
+	if echo "${LINE}" |grep -q "^${GLOBAL_NAME_OF_PACKAGE}"; then
 		NAME_PACKAGE_1="$( echo "${LINE}" |cut -d " " -f 1 )"
 		VERSION_1="$( echo "${LINE}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
 	fi
-	if echo "${LINE}" | grep "<.*@.*>" | grep -q "--" --; then
-		DATE_1="$(analyze_date ${LINE})"
-	fi
-	while read -r LINE_1; do
-		if $(echo "${LINE_1}" |grep -q "^${GLOBAL_NAME_OF_PACKAGE}"); then
-		NAME_PACKAGE_2="$( echo "${LINE_1}" |cut -d " " -f 1 )"
-		VERSION_2="$( echo "${LINE_1}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
-		fi
-		if echo "${LINE_1}" | grep "<.*@.*>" | grep -q "--" --; then
-		DATE_2="$(analyze_date ${LINE_1})"
-		fi
-		if [ "${NAME_PACKAGE_1}" = "${NAME_PACKAGE_2}" ]; then
-			if [ "${VERSION_1}" = "${VERSION_2}" ]; then
+	if echo "${LINE}" | grep "<.*@.*>" | grep -q "--" -- ; then
+		DATE_1=$(analyze_date "${LINE}")
+		while read -r LINE_1; do
+			if echo "${LINE_1}" |grep -q "^${GLOBAL_NAME_OF_PACKAGE}"; then
+				NAME_PACKAGE_2="$( echo "${LINE_1}" |cut -d " " -f 1 )"
+				VERSION_2="$( echo "${LINE_1}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
 				continue
 			fi
-		#	echo "vers1= ${VERSION_1} DATE_1= ${DATE_1} vers2= ${VERSION_2} DATE_2= ${DATE_2}"
-			if dpkg --compare-VERSIONs "${VERSION_1}" gt "${VERSION_2}"; then 
-				if [ "${DATE_1}" -gt "${DATE_2}" ]; then 
-					continue
-				else
-					echo "anomaly is among (${NAME_PACKAGE_1} ${VERSION_1}) and (${NAME_PACKAGE_2} ${VERSION_2})"
-				fi
-			else 
-				if [ "${DATE_1}" -lt "${DATE_2}" ]; then
-					continue
-				else
-					echo "anomaly is among (${NAME_PACKAGE_1} ${VERSION_1}) and (${NAME_PACKAGE_2} ${VERSION_2})"
+			if echo "${LINE_1}" | grep "<.*@.*>" | grep -q "--" -- ; then
+				DATE_2=$(analyze_date "${LINE_1}")
+				if [ "${NAME_PACKAGE_1}" = "${NAME_PACKAGE_2}" ]; then
+					if [ "${VERSION_1}" = "${VERSION_2}" ]; then
+						continue
+					fi
+					if dpkg --compare-versions "${VERSION_1}" gt "${VERSION_2}" ; then 
+						if echo "${VERSION_2}" |grep -q "mos" && echo "${VERSION_1}" |grep -vq "mos"; then
+							if [ "${DATE_1}" -lt "${DATE_2}" ]; then
+								continue
+							else 
+								echo "anomaly is in a date among :"
+								echo "${NAME_PACKAGE_1} ${VERSION_1} ${DATE_1}"
+								echo "${NAME_PACKAGE_2} ${VERSION_2} ${DATE_2}"
+								exit 1
+							fi
+						fi
+						if [ "${DATE_1}" -gt "${DATE_2}" ]; then
+							continue
+						else
+							echo "anomaly is in a date among :"
+							echo "${NAME_PACKAGE_1} ${VERSION_1} ${DATE_1}"
+							echo "${NAME_PACKAGE_2} ${VERSION_2} ${DATE_2}"
+							exit 1
+						fi
+					elif echo "${VERSION_1}" |grep -q "mos" && echo "${VERSION_2}" |grep -vq "mos"; then
+						if [ "${DATE_1}" -gt "${DATE_2}" ]; then
+							continue
+						else 
+							echo "anomaly is in a date among :"
+							echo "${NAME_PACKAGE_1} ${VERSION_1} ${DATE_1}"
+							echo "${NAME_PACKAGE_2} ${VERSION_2} ${DATE_2}"
+							exit 1
+						fi
+					fi
 				fi
 			fi
-		fi
-	done<${VER_SORT_TEMP}
-done<${VER_SORT_TEMP}
+			continue
+		done<${INPUT_FILE}
+	fi
+done<${INPUT_FILE}
 
 }
 
@@ -298,14 +317,14 @@ check_epoch(){
 if grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" |grep -q ":" ; then
 	sed -i "${GLOBAL_NAME_OF_PACKAGE}.*([0-9][^:]/s/(/(0:/g" "${INPUT_FILE}"
 	echo "EPOCH PRESENT"
-esac
+fi
 
 }
 
 
 dell_null_epoch(){
-
-sed -i "${GLOBAL_NAME_OF_PACKAGE}.*(0:/s/(0:/(/g" "${INPUT_FILE}"
+echo "${GLOBAL_NAME_OF_PACKAGE}"
+sed -i "${GLOBAL_NAME_OF_PACKAGE}.*\(0:/s/\(0:/\(/g" "${INPUT_FILE}"
 
 }
 
@@ -315,15 +334,17 @@ FORMATING_ERROR=$(mktemp -t FORMATING_ERROR.XXXXX)
 
 echo -E "Looking for the format errors =====>"
 grep -E "^${GLOBAL_NAME_OF_PACKAGE}.*\(.*\).*" "${INPUT_FILE}" | \
-grep -Ev "^${GLOBAL_NAME_OF_PACKAGE}.*[[:space:]]{1}\(([0-9]:)?[0-9\.[0-9]\..*" >>${FORMATING_ERROR}
+grep -Ev "^${GLOBAL_NAME_OF_PACKAGE}.*[[:space:]]{1}\(([0-9]:)?[0-9\.[0-9]\..*" >>${FORMATING_ERROR} || true #debug
 
-grep -E "^[[:space:]]+${GLOBAL_NAME_OF_PACKAGE}.* \(.*\)" "${INPUT_FILE}" >>${FORMATING_ERROR}
+grep -E "^[[:space:]]+${GLOBAL_NAME_OF_PACKAGE}.* \(.*\)" "${INPUT_FILE}" >>${FORMATING_ERROR} || true
 
 grep -E "^[[:space:]]*--.*>[[:space:]]*(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" \
- "${INPUT_FILE}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" >>${FORMATING_ERROR}
+ "${INPUT_FILE}" |grep -vE "^[[:space:]]{1}--.*>[[:space:]]{2}(Mon, |Tue, |Wed, |Thu, |Fri, |Sat, |Sun)" >>${FORMATING_ERROR} ||true
  if [ -s ${FORMATING_ERROR} ]; then
  	echo "Correct next formating errors:"
  	cat ${FORMATING_ERROR}
+ else
+ 	echo "Nothing to fix"
  fi
  rm -rf ${FORMATING_ERROR}
 
@@ -338,4 +359,4 @@ sort_by_version
 looking_for_anomalies
 print_body ${VER_SORT_TEMP} >2
 dell_null_epoch
-diff -u ${INPUT_FILE} 2
+# diff -u ${INPUT_FILE} 2
