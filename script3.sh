@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set -o errexit
-set -x # delete after debug
+# set -x # delete after debug
 
 USAGE="script.sh CHANGELOG_FILE"
 
@@ -56,7 +56,7 @@ while IFS= read -r LINE_1; do
 	fi
 	while IFS= read -r LINE; do
 		if [ "${FLAG}" -eq 1 ]; then
-			if echo "${LINE}" | grep "<.*@.*>" | grep -e "^ -- "; then
+			if echo "${LINE}" | grep "<.*@.*>" | grep -qe "^ -- "; then
 				echo "${LINE}"
 				echo ""
 				break
