@@ -1,34 +1,51 @@
-bandit (0.13.2-2~u14.04+mos1) mos8.0; urgency=medium
+print_body
+mysql-5.5 (5.5.49-0+deb8u1) jessie-security; urgency=high
 
-  * Source: http://http.debian.net/debian/pool/main/b/bandit/bandit_0.13.2-2.dsc
+  * Imported Upstream version 5.5.49 to fix security issues:
+    - http://www.oracle.com/technetwork/topics/security/cpuapr2016-2881694.html
+    - CVE-2016-0640 CVE-2016-0641 CVE-2016-0642 CVE-2016-0643 CVE-2016-0644
+      CVE-2016-0646 CVE-2016-0647 CVE-2016-0648 CVE-2016-0649 CVE-2016-0650
+      CVE-2016-0666 CVE-2016-2047 
+    (Closes: #821100)
 
- -- Ivan Udovichenko <iudovichenko@mirantis.com>  Tue, 29 Sep 2015 15:59:41 +0300
+ -- Lars Tangvald <lars.tangvald@oracle.com>  Mon, 18 Apr 2016 07:53:29 +0200
+ -- Lars Tangvald <lars.tangvald@oracle.com>  Mon, 18 Apr 2016 07:53:29 +0200
 
-bandit (0.13.2-2) experimental; urgency=medium
+mysql-5.5 (5.5.47-0+deb8u1) jessie-security; urgency=high
 
-  * Adds Breask+Replaces to allow upgrades (Closes: #798457).
+  * Imported Upstream version 5.5.47 to fix security issues:
+    - http://www.oracle.com/technetwork/topics/security/cpujan2016-2367955.html
+    - CVE-2016-0546 CVE-2016-0505 CVE-2016-0596 CVE-2016-0597 CVE-2016-0616
+      CVE-2016-0598 CVE-2016-0600 CVE-2016-0606 CVE-2016-0608 CVE-2016-0609
+    (Closes: #811428)
+  * fix-test-suite-failure-caused-by-arbitrary-date-in-the-future-patch is no
+    longer needed, as bug is fixed in new Upstream version
 
- -- Thomas Goirand <zigo@debian.org>  Mon, 14 Sep 2015 11:02:58 +0000
+ -- Lars Tangvald <lars.tangvald@oracle.com>  Wed, 13 Jan 2016 12:53:26 +0100
+ -- Lars Tangvald <lars.tangvald@oracle.com>  Wed, 13 Jan 2016 12:53:26 +0100
 
-bandit (0.13.2-1) experimental; urgency=low
+mysql-5.5 (5.5.46-0+deb8u1) jessie-security; urgency=high
 
-  [ Dave Walker (Daviey) ]
-  * New upstream release:
-    - Use (& install) /etc/bandit/bandit.yaml config (Closes: #794072)
-    - Improved description of subprocess finding report (Closes: #794084)
-    - Fix Bad spacing in --help result (Closes: #794076)
+  * Non-maintainer upload by the Security Team.
+  * Imported Upstream version 5.5.46 to fix security issues:
+    - http://www.oracle.com/technetwork/topics/security/cpuoct2015-2367953.html
+    - CVE-2015-4792 CVE-2015-4802 CVE-2015-4815 CVE-2015-4816 CVE-2015-4819
+      CVE-2015-4826 CVE-2015-4830 CVE-2015-4836 CVE-2015-4858 CVE-2015-4861
+      CVE-2015-4870 CVE-2015-4879 CVE-2015-4913
+    (Closes: #802564)
+  * Add fix-test-suite-failure-caused-by-arbitrary-date-in-the-future.patch.
+    Fix test suite failure caused by arbitrary date in the future.
+    Thanks to Marc Deslauriers <marc.deslauriers@canonical.com>
 
-  [ Thomas Goirand ]
-  * Adds Ubuntu patch (Closes: #796394):
-    - Update dependencies to align with upstream.
-    - Run tests with output and fail the build if test failure.
-  * Added Python 3 support (Closes: #794074).
-  * Using debian/unstable as packaging branch.
+ -- Salvatore Bonaccorso <carnil@debian.org>  Fri, 23 Oct 2015 13:35:23 +0200
+ -- Salvatore Bonaccorso <carnil@debian.org>  Fri, 23 Oct 2015 13:35:23 +0200
 
- -- Thomas Goirand <zigo@debian.org>  Sun, 30 Aug 2015 15:31:18 +0000
+mysql-5.5 (5.5.44-0+deb8u1) jessie-security; urgency=high
 
-bandit (0.12.0-1) unstable; urgency=low
+  * Non-maintainer upload by the Security Team.
+  * Imported Upstream version 5.5.44 to fix security issues:
+    - http://www.oracle.com/technetwork/topics/security/cpujul2015-2367936.html
+    - CVE-2015-4752 CVE-2015-4737 CVE-2015-2648 CVE-2015-2643 CVE-2015-2620
+      CVE-2015-2582
+    (Closes: #792445)
 
-  * Initial release (Closes: #793007).
-
- -- Dave Walker (Daviey) <email@daviey.com>  Wed, 22 Jul 2015 09:01:39 +0100
