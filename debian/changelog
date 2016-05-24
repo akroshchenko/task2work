@@ -1,14 +1,16 @@
-python-pycadf (2.2.0-2) unstable; urgency=medium
+python-pycadf (2.2.0-2~14.04+mos1) mos9.0; urgency=medium
 
-  [ Ondřej Nový ]
-  * Standards-Version is 3.9.8 now (no change)
-  * d/rules: Changed UPSTREAM_GIT protocol to https
-  * d/copyright: Changed source URL to https protocol
+  * Source: https://anonscm.debian.org/cgit/openstack/python-pycadf.git/commit/
+            ?id=0c240750d3292668a3d0d2472dda7928f1a2704f
 
-  [ Thomas Goirand ]
-  * Fixed trashed binary symbols in neutron_api_audit_map.conf
+ -- Andrii Kroshchenko <akroshchenko@mirantis.com>  Mon, 23 May 2016 20:04:05 +0300
 
- -- Thomas Goirand <zigo@debian.org>  Mon, 23 May 2016 15:41:41 +0200
+python-pycadf (2.2.0-2~14.04+mos1) mos9.0; urgency=medium
+
+  * Source: https://anonscm.debian.org/cgit/openstack/python-pycadf.git/commit/
+            ?id=0c240750d3292668a3d0d2472dda7928f1a2704f
+
+ -- Andrii Kroshchenko <akroshchenko@mirantis.com>  Mon, 23 May 2016 20:04:05 +0300
 
 python-pycadf (2.2.0-1) unstable; urgency=medium
 
@@ -29,14 +31,26 @@ python-pycadf (2.0.1-2) unstable; urgency=medium
 
  -- Thomas Goirand <zigo@debian.org>  Mon, 04 Apr 2016 19:54:43 +0000
 
-python-pycadf (2.0.1-1) experimental; urgency=medium
+python-pycadf (2.0.1-1~u14.04+mos1) mos9.0; urgency=medium
 
-  * New upstream release.
-  * Fixed (build-)depends for this release.
-  * Rebased fix-pytz-version-in-requirements.txt.patch.
-  * Fixed debian/copyright ordering.
+  * Sources are from
+    http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_2.0.1-1.dsc
+  * Fix patch fix-pytz-version-in-requirements.patch
+  * Update build depends according to test requirements of the project
+  * Update depends according to global requirements of Mitaka
 
- -- Thomas Goirand <zigo@debian.org>  Fri, 04 Dec 2015 11:43:14 +0100
+ -- Daniil Trishkin <dtrishkin@mirantis.com>  Thu, 28 Jan 2016 15:26:18 +0300
+
+python-pycadf (2.0.1-1~u14.04+mos1) mos9.0; urgency=medium
+
+  * Sources are from
+    http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_2.0.1-1.dsc
+    http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_2.0.1-1.dsc
+  * Fix patch fix-pytz-version-in-requirements.patch
+  * Update build depends according to test requirements of the project
+  * Update depends according to global requirements of Mitaka
+
+ -- Daniil Trishkin <dtrishkin@mirantis.com>  Thu, 28 Jan 2016 15:26:18 +0300
 
 python-pycadf (1.1.0-3) unstable; urgency=medium
 
@@ -51,14 +65,18 @@ python-pycadf (1.1.0-2) experimental; urgency=medium
 
  -- Thomas Goirand <zigo@debian.org>  Sat, 03 Oct 2015 17:33:25 +0200
 
-python-pycadf (1.1.0-1) experimental; urgency=medium
+python-pycadf (1.1.0-1~u14.04+mos1) mos8.0; urgency=medium
 
-  * Team upload.
-  * New upstream release.
-  * Align (Build-)Depends with upstream.
-  * Refresh patches.
+  * Source: http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_1.1.0-1.dsc
 
- -- James Page <james.page@ubuntu.com>  Thu, 17 Sep 2015 11:05:54 +0100
+ -- Sergey Kolekonov <skolekonov@mirantis.com>  Thu, 01 Oct 2015 15:47:05 +0300
+
+python-pycadf (1.1.0-1~u14.04+mos1) mos8.0; urgency=medium
+
+  * Source: http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_1.1.0-1.dsc
+  * Source: http://http.debian.net/debian/pool/main/p/python-pycadf/python-pycadf_1.1.0-1.dsc
+
+ -- Sergey Kolekonov <skolekonov@mirantis.com>  Thu, 01 Oct 2015 15:47:05 +0300
 
 python-pycadf (0.8.0-1) unstable; urgency=medium
 
@@ -78,17 +96,17 @@ python-pycadf (0.6.0-1) experimental; urgency=medium
 
  -- Thomas Goirand <zigo@debian.org>  Wed, 17 Sep 2014 15:43:39 +0800
 
-python-pycadf (0.5.1-1) unstable; urgency=medium
-
-  * New upstream release.
-
- -- Thomas Goirand <zigo@debian.org>  Tue, 01 Jul 2014 00:22:04 +0800
-
 python-pycadf (0.5-2) unstable; urgency=medium
 
   * Uploading to unstable.
 
  -- Thomas Goirand <zigo@debian.org>  Fri, 18 Apr 2014 07:59:24 +0000
+
+python-pycadf (0.5.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 01 Jul 2014 00:22:04 +0800
 
 python-pycadf (0.5-1) experimental; urgency=medium
 
@@ -131,3 +149,4 @@ python-pycadf (0.1.5-1) unstable; urgency=low
   * Initial release. (Closes: #721906)
 
  -- Thomas Goirand <zigo@debian.org>  Thu, 05 Sep 2013 00:29:51 +0800
+
