@@ -15,12 +15,20 @@ INPUT_FILE=$(find ./debian -name changelog)
 
 
 look_for_format_errors(){
+echo"">>"${INPUT_FILE}"
+i=0
 while [ -z "$(head -n 1 ${INPUT_FILE})" ]; do
+	echo "i=$i"
+	i=$((i + 1))
+	if [ $i -gt 100 ];then
+		echo "${INPUT_FILE} contains lots of empty line in the begining..."
+		exit 1
+	fi
 	sed -i "1d" "${INPUT_FILE}"
 done
 GLOBAL_NAME_OF_PACKAGE="$(head -n 1 ${INPUT_FILE} |cut -d" " -f1|cut -d"-" -f1)"
 sed -i "/${GLOBAL_NAME_OF_PACKAGE}.*urgency.*/ s/^ *//" "${INPUT_FILE}"
-sed -i "/--.*>/ s/^ */ /" "${INPUT_FILE}"
+sed -i "/--.*>/ s/^  +/ /" "${INPUT_FILE}"
 
 }
 
@@ -39,7 +47,7 @@ while IFS= read LINE_1; do
 		VERSION="$( echo "${LINE_1}" |cut -d " " -f 2 | sed -e "s/\((\|)\)//g")"
 		FLAG=0
 	fi
-	while IFS= read LINE; do
+	while IFS= read -r LINE; do
 		if [ "${FLAG}" -eq 1 ]; then
 			if echo "${LINE}" | grep "<.*@.*>" | grep -qe "^ -- "; then
 				echo "${LINE}"
@@ -48,7 +56,7 @@ while IFS= read LINE_1; do
 			fi
 			echo "${LINE}"
 		fi
-		if echo "${LINE}" | grep -q "${NAME}" && echo "${LINE}" | grep -q "${VERSION}"; then
+		if echo "${LINE}" | grep -q "${NAME}" && echo "${LINE}" | grep -qw "(${VERSION})"; then
 			echo "${LINE}"
 			FLAG=1
 		fi
@@ -58,22 +66,29 @@ done<${INPUT_ORDER}
 
 
 sort_by_version(){
-
+local LINE
 TEMP_BUFFER=$(mktemp -t TEMP_BUFFER.XXXXX)
-MY_VER_SORT_TEMP=$(mktemp -t MY_VER_SORT_TEMP.XXXXX)
 SORTING_ORDER_INPUT_FILE=$(mktemp -t SORTING_ORDER_INPUT_FILE.XXXXX)
+MY_VER_SORT_TEMP_MOS_SUFFIX=$(mktemp -t MY_VER_SORT_TEMP_MOS_SUFFIX.XXXXX)
+MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX=$(mktemp -t MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX.XXXXX)
 DIFF_FILE=$(mktemp -t DIFF_FILE.XXXXX)
-echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | sort -ru| sed -e "s/\((\|)\)//g")" > "${MY_VER_SORT_TEMP}"
+echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 |grep  mos| sort -Vru | sed -e "s/\((\|)\)//g")" > "${MY_VER_SORT_TEMP_MOS_SUFFIX}"
+echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | grep -v mos| sort -Vru | sed -e "s/\((\|)\)//g")" > "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}"
+while read LINE; do
+	eval sed -i \'/${LINE%~*}/ i\\${LINE}\' ${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}
+done<${MY_VER_SORT_TEMP_MOS_SUFFIX}
+
 dpkg-parsechangelog --show-field version --all --format rfc822| sed '/^$/d' > "${SORTING_ORDER_INPUT_FILE}"
-diff -u "${SORTING_ORDER_INPUT_FILE}" <(cut -d" " -f2 "${MY_VER_SORT_TEMP}") > "${DIFF_FILE}"
+diff -u "${SORTING_ORDER_INPUT_FILE}" <(cut -d" " -f2 "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}") > "${DIFF_FILE}"
 if [ -s ${DIFF_FILE} ]; then
 	echo "${INPUT_FILE} has problem whith sorting package version"
 	cat ${DIFF_FILE}
 fi
-print_body "${MY_VER_SORT_TEMP}" > "${TEMP_BUFFER}"
+print_body "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}" > "${TEMP_BUFFER}"
+
 cp "${TEMP_BUFFER}" "${INPUT_FILE}"
 # rm -rf "${MY_VER_SORT_TEMP}" "${SORTING_ORDER_INPUT_FILE}" "${TEMP_BUFFER}" "${DIFF_FILE}"
-echo "${MY_VER_SORT_TEMP}" "${SORTING_ORDER_INPUT_FILE}" "${TEMP_BUFFER}" "${DIFF_FILE}"
+echo "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}" "${SORTING_ORDER_INPUT_FILE}" "${TEMP_BUFFER}" "${DIFF_FILE}"
 
 }
 

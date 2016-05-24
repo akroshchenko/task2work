@@ -1,133 +1,151 @@
-python-pycadf (2.2.0-2) unstable; urgency=medium
+python-oslo.concurrency (3.7.0-3~u14.04+mos0) mos9.0; urgency=medium
 
-  [ Ondřej Nový ]
+  * Update python-oslo.concurrency to v3.7.0
+  * Source: https://anonscm.debian.org/cgit/openstack/python-oslo.concurrency.git
+     Commit 6df05fb1795071716dbde7dfede1c700a8986ed1
+  * Update build and runtime dependencies.
+
+ -- Andrii Kroshchenko <akroshchenko@mirantis.com>  Fri, 15 Mar 2016 14:18:22 +0300
+
+python-oslo.concurrency (3.7.0-3) UNRELEASED; urgency=medium
+
   * Standards-Version is 3.9.8 now (no change)
-  * d/rules: Changed UPSTREAM_GIT protocol to https
-  * d/copyright: Changed source URL to https protocol
+
+ -- Ondřej Nový <novy@ondrej.org>  Sat, 09 Apr 2016 19:28:50 +0200
+
+python-oslo.concurrency (3.7.0-2) unstable; urgency=medium
+
+  * Uploading to unstable.
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 04 Apr 2016 08:42:17 +0000
+
+python-oslo.concurrency (3.7.0-1) experimental; urgency=medium
+
+  [ Corey Bryant ]
+  * d/p/fix-tests-i386.patch: Fix tests that fail on i386 builds.
 
   [ Thomas Goirand ]
-  * Fixed trashed binary symbols in neutron_api_audit_map.conf
-
- -- Thomas Goirand <zigo@debian.org>  Mon, 23 May 2016 15:41:41 +0200
-
-python-pycadf (2.2.0-1) unstable; urgency=medium
-
   * New upstream release.
-  * Fixed (build-)depends for this release.
-  * Updated fix-pytz-version-in-requirements.txt.patch
 
- -- Thomas Goirand <zigo@debian.org>  Mon, 04 Apr 2016 19:58:02 +0000
+ -- Thomas Goirand <zigo@debian.org>  Sat, 02 Apr 2016 14:17:31 +0200
 
-python-pycadf (2.0.1-2) unstable; urgency=medium
+python-oslo.concurrency (3.6.0-1~u14.04+mos2) mos9.0; urgency=medium
+
+  * Update python-oslo.concurrency to v3.6.0
+  * Update build and runtime dependencies
+
+ -- Mikhail Ivanov <mivanov@mirantis.com>  Fri, 04 Mar 2016 15:10:02 +0300
+
+python-oslo.concurrency (3.6.0-1) experimental; urgency=medium
 
   [ Ondřej Nový ]
   * Fixed VCS URLs (https).
 
+  [ Corey Bryant ]
+  * New upstream release.
+  * d/control: Align (Build-)Depends with upstream.
+  * d/p/lock-path-tempfile.patch: Cherry picked from upstream to set default
+    of lock_file to a tempfile if OSLO_LOCK_PATH isn't set (LP: #1550188).
+
   [ Thomas Goirand ]
-  * Uploading to unstable.
+  * Fixed debian/copyright ordering.
   * Standards-Version: 3.9.7 (no change).
 
- -- Thomas Goirand <zigo@debian.org>  Mon, 04 Apr 2016 19:54:43 +0000
+ -- Thomas Goirand <zigo@debian.org>  Wed, 02 Mar 2016 10:45:58 +0000
 
-python-pycadf (2.0.1-1) experimental; urgency=medium
+python-oslo.concurrency (3.3.0-1~u14.04+mos1) mos9.0; urgency=medium
+
+  * Sources are from
+    http://http.debian.net/debian/pool/main/p/python-oslo.concurrency/
+  * Update runtime requirements according to global requirements of Mitaka
+
+ -- Artem Silenkov <asilenkov@mirantis.com>  Fri, 15 Jan 2016 15:50:50 +0300
+
+python-oslo.concurrency (3.3.0-1) experimental; urgency=medium
 
   * New upstream release.
   * Fixed (build-)depends for this release.
-  * Rebased fix-pytz-version-in-requirements.txt.patch.
-  * Fixed debian/copyright ordering.
 
- -- Thomas Goirand <zigo@debian.org>  Fri, 04 Dec 2015 11:43:14 +0100
+ -- Thomas Goirand <zigo@debian.org>  Fri, 15 Jan 2016 03:27:02 +0000
 
-python-pycadf (1.1.0-3) unstable; urgency=medium
-
-  * Uploading to unstable.
-
- -- Thomas Goirand <zigo@debian.org>  Fri, 16 Oct 2015 10:29:42 +0000
-
-python-pycadf (1.1.0-2) experimental; urgency=medium
-
-  * Added Python 3 support.
-  * Fixed watching to use github tag and not broken pypi.
-
- -- Thomas Goirand <zigo@debian.org>  Sat, 03 Oct 2015 17:33:25 +0200
-
-python-pycadf (1.1.0-1) experimental; urgency=medium
-
-  * Team upload.
-  * New upstream release.
-  * Align (Build-)Depends with upstream.
-  * Refresh patches.
-
- -- James Page <james.page@ubuntu.com>  Thu, 17 Sep 2015 11:05:54 +0100
-
-python-pycadf (0.8.0-1) unstable; urgency=medium
+python-oslo.concurrency (3.2.0-1) experimental; urgency=medium
 
   * New upstream release.
-  * Uploading to unstable.
+  * Also run tests in Python 3.5.
+  * Removed all patches.
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 13 Jan 2016 01:36:33 +0000
+
+python-oslo.concurrency (3.0.0-1) experimental; urgency=medium
+
+  * New upstream release.
   * Fixed (build-)depends for this release.
 
- -- Thomas Goirand <zigo@debian.org>  Mon, 16 Mar 2015 14:44:59 +0100
+ -- Thomas Goirand <zigo@debian.org>  Tue, 01 Dec 2015 10:53:33 +0100
 
-python-pycadf (0.6.0-1) experimental; urgency=medium
+python-oslo.concurrency (2.6.0-3) unstable; urgency=medium
 
-  * New upstream release.
-  * Uploading to experimental just right before the freeze.
-  * Updated (build-)depends for this release.
-  * Install the *_api_audit_map.conf correctly (previously, there was only a
-    single file, now there's 4...).
+  * override_dh_python3 to fix Py3 shebang.
 
- -- Thomas Goirand <zigo@debian.org>  Wed, 17 Sep 2014 15:43:39 +0800
+ -- Thomas Goirand <zigo@debian.org>  Fri, 23 Oct 2015 23:22:37 +0000
 
-python-pycadf (0.5.1-1) unstable; urgency=medium
-
-  * New upstream release.
-
- -- Thomas Goirand <zigo@debian.org>  Tue, 01 Jul 2014 00:22:04 +0800
-
-python-pycadf (0.5-2) unstable; urgency=medium
+python-oslo.concurrency (2.6.0-2) unstable; urgency=medium
 
   * Uploading to unstable.
 
- -- Thomas Goirand <zigo@debian.org>  Fri, 18 Apr 2014 07:59:24 +0000
+ -- Thomas Goirand <zigo@debian.org>  Thu, 15 Oct 2015 19:22:21 +0000
 
-python-pycadf (0.5-1) experimental; urgency=medium
+python-oslo.concurrency (2.6.0-1) experimental; urgency=medium
 
-  [ gustavo panizzo ]
   * New upstream release.
-  * New build dependencies python-sphinx, python-docutils.
-  * Increased the version required of python-six, python-iso8601.
+  * Fixed (build-)depends for this release.
+  * Don't test with Python 3.5 for now (only 3.4) as there's unit test
+    failures.
+
+ -- Thomas Goirand <zigo@debian.org>  Sun, 27 Sep 2015 17:12:06 +0200
+
+python-oslo.concurrency (2.3.0-1) experimental; urgency=medium
+
+  [ James Page ]
+  * Fixup typo in transitional package description (LP: #1471561).
 
   [ Thomas Goirand ]
-  * Some more (buid-)depends fixes.
-  * Bumped Standards-Version to 3.9.5.
+  * New upstream release.
+  * Fixed build-depends for this release.
+  * Stop the manual copy of now inexistant folder.
+  * Added Priority: extra to transition packages.
 
- -- Thomas Goirand <zigo@debian.org>  Thu, 03 Apr 2014 08:21:58 +0000
+ -- Thomas Goirand <zigo@debian.org>  Wed, 29 Jul 2015 23:57:32 +0000
 
-python-pycadf (0.4.1-2) experimental; urgency=low
+python-oslo.concurrency (2.0.0-1) experimental; urgency=medium
 
-  * Missing build-depends: subunit.
+  * Team upload.
+  * New upstream release. 
+  * Update watch file to use Debian pypi redirector.
 
- -- Thomas Goirand <zigo@debian.org>  Sat, 22 Mar 2014 15:46:50 +0800
+ -- James Page <james.page@ubuntu.com>  Wed, 10 Jun 2015 17:48:56 +0100
 
-python-pycadf (0.4.1-1) experimental; urgency=medium
+python-oslo.concurrency (1.10.0-1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream release:
+    - d/control: Align version requirements with upstream.
+  * Re-align with Ubuntu:
+    - d/control: Add Breaks/Replaces and transitional packages for
+      *oslo-concurrency packages in Ubuntu.
+
+ -- James Page <james.page@ubuntu.com>  Tue, 09 Jun 2015 08:49:55 +0100
+
+python-oslo.concurrency (1.8.0-1) unstable; urgency=medium
 
   * New upstream release.
-  * Updated URLs of the project in debian/rules, debian/copyright and
-    debian/control.
-  * Review of (build-)dependencies.
-  * Better testr / subunit console output.
+  * Added python-retrying as (build-)depends.
+  * Copy the openstack-common stuff manually, as it's not there.
 
- -- Thomas Goirand <zigo@debian.org>  Fri, 07 Mar 2014 15:10:28 +0800
+ -- Thomas Goirand <zigo@debian.org>  Tue, 23 Dec 2014 10:44:01 +0800
 
-python-pycadf (0.2-1) unstable; urgency=low
+python-oslo.concurrency (0.2.0-1) unstable; urgency=medium
 
-  * New upstream release.
-  * Added --testr-args='--subunit  ' when calling testr
+  * Initial release. (Closes: #769287)
 
- -- Thomas Goirand <zigo@debian.org>  Tue, 01 Oct 2013 15:03:34 +0800
-
-python-pycadf (0.1.5-1) unstable; urgency=low
-
-  * Initial release. (Closes: #721906)
-
- -- Thomas Goirand <zigo@debian.org>  Thu, 05 Sep 2013 00:29:51 +0800
+ -- Thomas Goirand <zigo@debian.org>  Wed, 12 Nov 2014 20:49:34 +0800
