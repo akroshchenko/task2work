@@ -16,6 +16,7 @@ INPUT_FILE=$(find ./debian -name changelog)
 
 look_for_format_errors(){
 echo"">>"${INPUT_FILE}"
+sed -ie "s/ *$//" "${INPUT_FILE}"
 i=0
 while [ -z "$(head -n 1 ${INPUT_FILE})" ]; do
 	echo "i=$i"
@@ -28,7 +29,7 @@ while [ -z "$(head -n 1 ${INPUT_FILE})" ]; do
 done
 GLOBAL_NAME_OF_PACKAGE="$(head -n 1 ${INPUT_FILE} |cut -d" " -f1|cut -d"-" -f1)"
 sed -i "/${GLOBAL_NAME_OF_PACKAGE}.*urgency.*/ s/^ *//" "${INPUT_FILE}"
-sed -i "/--.*>/ s/^  +/ /" "${INPUT_FILE}"
+sed -i "/--.*>/ s/^  */ /" "${INPUT_FILE}"
 
 }
 
