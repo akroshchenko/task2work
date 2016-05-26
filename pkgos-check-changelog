@@ -1,22 +1,16 @@
 #!/bin/bash
 
 # set -o errexit
-# set -x # delete after debug
+# set -x
 
 USAGE="script.sh CHANGELOG_FILE"
 
 INPUT_FILE=$(find ./debian -name changelog)
 
 
-# This function takes a list of PACKAGEs which need to print. 
-#- This list contain the name of PACKAGEs from INPUT_FILE in special order.
-
-
-
-
 look_for_format_errors(){
 
-	echo"">>"${INPUT_FILE}"
+	echo >>"${INPUT_FILE}"
 	sed -ie "s/ *$//" "${INPUT_FILE}"
 	i=0
 	while [ -z "$(head -n 1 ${INPUT_FILE})" ]; do
@@ -76,15 +70,16 @@ sort_by_version(){
 	MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX=$(mktemp -t MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX.XXXXX)
 	echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 |grep  mos| sort -Vru | sed -e "s/\((\|)\)//g")" > "${MY_VER_SORT_TEMP_MOS_SUFFIX}"
 	echo "$(grep "^${GLOBAL_NAME_OF_PACKAGE}" "${INPUT_FILE}" | cut -d " " -f 1,2 | grep -v mos| sort -Vru | sed -e "s/\((\|)\)//g")" > "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}"
-	while read LINE; do
-		sed -i "/${LINE%~*}/ i\\${LINE}" ${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}
-	done<${MY_VER_SORT_TEMP_MOS_SUFFIX}
+	if [ -n "$(cat ${MY_VER_SORT_TEMP_MOS_SUFFIX})" ];then
+		echo fail = ${MY_VER_SORT_TEMP_MOS_SUFFIX}
+		cat ${MY_VER_SORT_TEMP_MOS_SUFFIX}
+		while read LINE; do
+			sed -i "/${LINE%~*}/ i\\${LINE}" ${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}
+		done<${MY_VER_SORT_TEMP_MOS_SUFFIX}
+	fi
 	print_body "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}" > "${TEMP_BUFFER}"
-	
 	cp "${TEMP_BUFFER}" "${INPUT_FILE}"
-	# rm -rf "${MY_VER_SORT_TEMP}" "${SORTING_ORDER_INPUT_FILE}" "${TEMP_BUFFER}" "${DIFF_FILE}"
-	echo "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}"  "${TEMP_BUFFER}" 
-
+	rm "${MY_VER_SORT_TEMP_2_WITOUT_MOS_SUFFIX}" "${MY_VER_SORT_TEMP_MOS_SUFFIX}" "${TEMP_BUFFER}" 
 }
 
 
